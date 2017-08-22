@@ -4,15 +4,13 @@ var input = require("./keys.js");
 
 var twitterCode = input.twitterKeys;
 
+
 var twitter = require('twitter');
-
-var client = new twitter(twitterCode);
-
 
 var commands = process.argv[2];
 
 if (commands==="my-tweets") {
-
+var client = new twitter(twitterCode);
 
 client.get('statuses/user_timeline', function(error, tweets, response) {
   if (!error) {
@@ -91,10 +89,10 @@ console.log(body);
 
 //--------------------------------Spotify API-------------------------------------------------------
 if (commands==="spotify-this-song") {
-	spotifyNow() };
+	
 
 
-	function spotifyNow(songTitle){
+	
 		
 var spotifyKey = require('node-spotify-api');
 
@@ -151,7 +149,8 @@ if (err) {
 }
 
 
-// Still need to fix this code
+//---------------------------------------------DO WHAT IT SAYS COMMAND-------------------------------------
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 if (commands==="do-what-it-says") {
 
 var fs = require("fs");
@@ -163,17 +162,35 @@ fs.readFile("random.txt", "utf8", function(err, data) {
 
   var output = data.split(",");
 
+if (output[0]==="spotify-this-song") {
+
 console.log(output[1]);
-output[1] = process.argv[3];
-var songTitle = output[1];
-    spotifyNow(songTitle);
+var text = output[1];
+var spotifyKey = require('node-spotify-api');
+
+var spotify = new spotifyKey({
+	id: '4cded79eed4041cfaf717f914953857f',
+	secret: 'b1cf7cf3fa6f47728334a9a0607f502e'
+
+});    
+
+spotify.search({ type: 'track', query: text }, function(err, data) {
   
+if (err) {
+    return console.log('Error occurred: ' + err);
+  }
+
+	console.log("---------------------------------------------------------------------------");
+	console.log("The Artist is: " + data.tracks.items[0].artists[0].name);
+	console.log("The song name is: " + data.tracks.items[0].name);
+    console.log("Preview link from Spotify: " + data.tracks.items[0].preview_url);
+    console.log("Album: " + data.tracks.items[0].album.name);
+    console.log("---------------------------------------------------------------------------");
+});
+  
+};
+
+
 });
 
-
-
-
-
-}
-
-
+};
